@@ -1,0 +1,533 @@
+doctype html
+html
+  head
+    title= "Cribbage!!"
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+        #login
+            style ::placeholder{color:white;opacity:0.5;}
+            img(class = "clogo" src="images/cribbage.png")
+            br
+            br
+            #container.col
+              form(id='play')
+                h1(style = "color: white; padding: 2px; display: inline-block; ") Welcome to Cribbage!
+                br
+                h4(id = 'error', style = "color: white; display: block; ").
+                input(id = "name", class = "user", type='text', name='form', value='',placeholder='Original, hilarious username...',autocomplete="off")
+                br
+                input(class = "play", type='submit', value='Play Game')
+                input(class = "priv", type='submit', value='Private Game')
+                //http://lmgtfy.com/?q=how+to+play+cribbage
+              form(action='https://www.google.com/')
+                input(class = "how", type='submit', value='What The Heck is Cribbage?')
+
+        #lobby.lob
+            #userbox.userbox
+                h3 Users Online
+                hr
+                #userArea.userArea
+
+            #chatbox.chatbox
+                h4(style = "color: white") Use command '/play [username]' to send a game request! Type '/play' to enter queue.
+                #chat.chatarea
+                    br
+                form(id = "send-message")
+                    input(size="35", id="message", class = "chattext",autocomplete="off")
+                    input(type="submit",class ="chatsubmit", value = "send")
+            #reqbox.reqbox
+                h3 Requests
+                hr
+                #reqarea
+                    #header
+
+
+        #crib.cribbox
+            h4(id = "welcomeline") 
+            #headerwelcome.head
+            br
+            br
+            br
+            img(class = "cribBoard" src="images/cribboardnew.png")
+            #score.scorebox
+                #p1scorebox.scoreplace
+                    h4(id = "p1Score") 0
+                #line.v1
+                #p2scorebox.scoreplace
+                    h4(id = "p2Score") 0
+            br
+            br
+            br
+            br
+            br
+            #playHands.pH
+            //APPEND HERE
+            //TODO:
+           
+            //ADD PLAYER BOXES PROCEDURALLY.
+            //
+            //button.dcard DRAW CARD
+            //#cribArea.cribItself
+            #turnUp.tu
+                img(id = "turnUpCard") 
+                
+        br
+        br
+        br
+        br
+        br
+        br
+        br
+        br
+        br
+        p Translate this page:
+        #google_translate_element
+        script(type='text/javascript').
+          function googleTranslateElementInit() {
+          new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+          }
+        script(type='text/javascript', src='//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit')
+
+script(src="/socket.io/socket.io.js")
+script(src="https://code.jquery.com/jquery-1.11.1.js")
+script.
+    function hide(){
+        document.getElementById("login").style.display = "none";
+        document.getElementById("lobby").style.display = "block";
+        document.getElementById("crib").style.display = "block";
+    }
+script.
+    $(function() {
+
+
+        var $nickForm = $('#play');
+        var $nickBox = $('#name');
+        var $nickError = $('#error');
+
+        var $userArea = $('#userArea');
+
+        var $messageForm = $('#send-message');
+        var $messageBox = $('#message');
+        var $chat = $('#chat');
+        
+        var $hwel = $('#headerwelcome');
+        var $crib = $('#crib');
+        var $cribArea = $('#cribArea');
+        var $cribItself = $('#cribItself');
+        var $playHands = $('#playHands');
+        var $p2Hand;
+        var $p1Hand;
+        var $playArea;
+        var $p2HA;
+        var $p1HA;
+        var $p1Score = $("#p1Score");
+        var $p2Score = $("#p2Score");
+
+        var $reqArea = $('#reqarea');
+
+        var chList = [];
+        
+        var roomName = '';
+        
+        var whichPlayer = '';
+        var isCrib = '';
+        
+        var counter = 0;
+        
+        var hand = [];
+        
+        var score = 0;
+        
+        var isTurn = false;
+        
+        var $nickN;
+        var $nickE;
+        
+        var playCards = [];
+        
+        //ism_student: 172.21.52.189
+        var socket = io('localhost:3000');
+        
+        var origHtmlp1;
+        var origHtmlp2;
+        function scrollDown(){
+            $chat.stop().animate({ scrollTop: $chat[0].scrollHeight},1000);
+        }
+        $messageForm.submit(function(e){
+            e.preventDefault();
+            if($messageBox.val()!=''){
+                socket.emit('send message',$messageBox.val(), function(data){
+                    if(!data){
+                        $chat.append("<strong style = 'color: red'>Username invalid.</strong><br/>");
+                        scrollDown();
+                    }
+                });
+            }
+            $messageBox.val('');
+        });
+        socket.on('usernames', function(data){
+            var html = '';
+            for(i=0; i < data.length; i++){
+                html += data[i] + '<br/>';
+            }
+            $userArea.html(html);
+        });
+        socket.on("new message",function(data){
+            console.log("message recieved");
+            $chat.append("<b>"+data.name+"</b>"+": " + data.msg + "</br>");
+            scrollDown();
+        });
+        $nickForm.submit(function(e){
+            //socket.emit("test");
+            e.preventDefault();
+            $nickN = $nickBox.val().trim();
+            if($nickN!=''&&$nickN!=' '&&!$nickN.includes(' ')){
+                socket.emit('set nickname', $nickN, function(data){
+                if(data){
+                    $('#login').hide();
+                    $('#crib').hide();
+                    $('#lobby').show();
+                }else{
+                    //$nickError.html('Invalid username!');
+                    $nickBox.val('Invalid Username!');
+                }
+                $nickBox.val('');
+                });
+            }
+        });
+
+        $(document).ready(function(){
+            $(document).on("click",".request",function(){
+                //socket.emit("test");
+                socket.emit("accept",$(this).val());
+            });
+            $(document).on("click",".card",function(){
+                console.log("number is " + whichPlayer);
+                console.log("room num is " + roomName);
+                //CARD CALLBACK
+                //this is where the emission happens.
+                socket.emit("playCard",{pname: $nickN, cardIndex: $(this).attr("name"),room: roomName},function(data){
+                
+                    if(!data){
+                        
+                    }
+                });
+                /*
+                socket.emit("addToCrib",{roomNum:roomName,playerNum:whichPlayer,handIndex:$(this).attr("name")},function(data){
+                    if(!data){
+                        //alert("It isn't your turn, pal.");
+                    }
+                });
+                */
+                console.log("value?: " + $(this).attr("name"));
+            });
+            $(document).on("click",".dcard",function(){
+                console.log("card draw attempt...");
+                /*
+                if(isTurn){
+                    console.log("this is working");
+                    socket.emit("Draw Card", roomName, );
+                    socket.emit("end turn", roomName);
+                    isTurn = false;
+                }else{
+                    console.log("this is not working");
+                }*/
+            });
+        });
+        socket.on("new turn", function(data){
+            //$hwel.append("IT IS " + $nickE +"'S TURN");
+            isTurn = true;
+        });
+        socket.on("user disconnected",function(data){
+            $chat.append(data + " has disconnected." + "<br/>");
+            scrollDown();
+        });
+        socket.on("challenged",function(data){
+            $chat.append("You have been challenged by: "+data+"<br/>");
+            scrollDown();
+            $reqArea.append("<div class = 'requestbox'> Challenged by: <button class = 'request' value = "+data+">"+data+"</button></div></br>")
+            chList[chList.length] = data;
+        });
+        socket.on("challenge", function(data){
+            $chat.append("Challenge sent! <br/>");
+            scrollDown();
+        });
+        socket.on("newRoundRoom", function(data){
+            $('#lobby').hide();
+            $('#crib').show();
+            //$hwel.append("<p>WELCOME, " + data.player1 + " AND " + data.player2 + " IN ROOM: "+ data.roomCount+"</p>");
+            roomName = data.roomCount;
+            $playHands.html("");            
+            $playHands.append("<div id='p2HA"+roomName+"' class = 'pHA'><div id='p2Hand"+roomName+"'"+"class = 'pHandBox'><div class='pName' id='p2Name'>"+data.player2+"</div></div></div><div id='playArea"+roomName+"' class='pA'><div class='pName' id='parea'>"+"The Play"+"</div><br><br><br><br><br><br></div><div id='p1HA"+roomName+"' class = 'pHA'><div id='p1Hand"+roomName+"'"+"class = 'pHandBox'><div class='pName' id='p1Name'>"+data.player1+"</div></div></div>");
+            //check which player has the crib, set to global var isCrib
+            $p2HA = $("#p2HA"+roomName);
+            $p1HA = $("#p1HA"+roomName);
+            $p2Hand = $("#p2Hand"+roomName);
+            $p1Hand = $("#p1Hand"+roomName);
+            $playArea = $("#playArea"+roomName);
+            //console.log(data.player1);
+            //console.log(data.player2);
+            console.log($nickN);
+            $p2name = data.player2;
+            $p1name = data.player1;
+            $nickE = data.player2;
+            if(data.player1 == $nickN){
+                isTurn = true;
+                console.log("I am " + whichPlayer);
+                whichPlayer = 'player 1';
+                console.log(whichPlayer);
+            }else{
+                isTurn = false;
+                whichPlayer = 'player 2';
+                console.log("I am "+ whichPlayer);
+            }
+            if(data.isCrib == 1){
+                isCrib = data.player1;
+                $p1HA.append("<div id='crib"+roomName+"'"+"class = 'p1CribBox'><div class='pName' id='cribTitle'>"+$p1name+"'s Crib"+"</div></div>");
+            }else{
+                isCrib = data.player2;
+                $p2HA.append("<div id='crib"+roomName+"'"+"class = 'p2CribBox'><div class='pName' id='cribTitle'>"+$p2name+"'s Crib"+"</div></div>");
+            }
+            $cribItself = $("#crib"+roomName);
+            socket.emit("testData", roomName);
+        });
+        socket.on("welcomeToRoom", function(data){
+            $('#lobby').hide();
+            $('#crib').show();
+            //$hwel.append("<p>WELCOME, " + data.player1 + " AND " + data.player2 + " IN ROOM: "+ data.roomCount+"</p>");
+            roomName = data.roomCount;            
+            $playHands.append("<div id='p2HA"+roomName+"' class = 'pHA'><div id='p2Hand"+roomName+"'"+"class = 'pHandBox'><div class='pName' id='p2Name'>"+data.player2+"</div></div></div><div id='playArea"+roomName+"' class='pA'><div class='pName' id='parea'>"+"The Play"+"</div><br><br><br><br><br><br></div><div id='p1HA"+roomName+"' class = 'pHA'><div id='p1Hand"+roomName+"'"+"class = 'pHandBox'><div class='pName' id='p1Name'>"+data.player1+"</div></div></div>");
+            //check which player has the crib, set to global var isCrib
+            $p2HA = $("#p2HA"+roomName);
+            $p1HA = $("#p1HA"+roomName);
+            $p2Hand = $("#p2Hand"+roomName);
+            $p1Hand = $("#p1Hand"+roomName);
+            $playArea = $("#playArea"+roomName);
+            //console.log(data.player1);
+            //console.log(data.player2);
+            console.log($nickN);
+            $p2name = data.player2;
+            $p1name = data.player1;
+            $nickE = data.player2;
+            if(data.player1 == $nickN){
+                isTurn = true;
+                console.log("I am " + whichPlayer);
+                whichPlayer = 'player 1';
+                console.log(whichPlayer);
+            }else{
+                isTurn = false;
+                whichPlayer = 'player 2';
+                console.log("I am "+ whichPlayer);
+            }
+            if(data.isCrib == 1){
+                isCrib = data.player1;
+                $p1HA.append("<div id='crib"+roomName+"'"+"class = 'p1CribBox'><div class='pName' id='cribTitle'>"+$p1name+"'s Crib"+"</div></div>");
+            }else{
+                isCrib = data.player2;
+                $p2HA.append("<div id='crib"+roomName+"'"+"class = 'p2CribBox'><div class='pName' id='cribTitle'>"+$p2name+"'s Crib"+"</div></div>");
+            }
+            $cribItself = $("#crib"+roomName);
+            socket.emit("testData", roomName);
+        });
+        socket.on("setTurnUp", function(data){
+            console.log("TURNUP UPDATED!!");
+            console.log("recieved a turn up card!! " + data.oid);
+            $('#turnUpCard').html("<img class='backcard' src='images/cards/"+data.oid+".png'></img>");
+        });
+        socket.on("gameStateUpdate", function(data){
+            //gameStateUpdate passes an object containing the following things, crib, p1Cards, p2Cards, turnUpCard, p1Score, p2Score, pCards, and thus dCards as well.
+            
+            //turnup update
+            console.log("TURNUP UPDATED!!");
+            console.log("recieved a turn up card!! " + data.oid);
+            $('#turnUpCard').html("<img class='backcard' src='images/cards/"+data.turnUpCard.oid+".png'></img>");
+            //score update
+            console.log("UPDATING SCORE!!!");
+            if(whichPlayer == "player 1"){
+                $p2Score.html("<h4>"+data.p2Score+"</h4>");
+                $p1Score.html("<h4 style = 'color: gold'>"+data.p1Score+"</h4>");
+            }else{
+                $p1Score.html("<h4>"+data.p1Score+"</h4>");
+                $p2Score.html("<h4 style = 'color: gold'>"+data.p2Score+"</h4>");
+            }
+            //play update
+            console.log("UPDATING PLAY!!!!!!!");
+                playCards = [];
+                $playArea.html("<div class='pName' id='parea'>"+"The Play"+"</div><br>");
+                playCards = data.pCards.slice();
+                var darkcards = [];
+                //console.log(playCards);
+                //if darkcards > 0, set class to darkcard, subtract darkcards by 1
+                darkcards = data.dCards.slice();
+                for(var i = 0; i < data.dCards.length; i++){
+                        $playArea.append("<img class='darkcard' src='images/cards/"+data.dCards[i].oid+".png'></img>");
+                    
+                }
+                for(cardIndex = 0;cardIndex < data.pCards.length; cardIndex++){
+                    console.log("ADDING CARDS TO BOARD!!!!");
+                        if(data.dCards.length > 0){
+                        }
+                        $playArea.append("<img class='backcard' src='images/cards/"+data.pCards[cardIndex].oid+".png'></img>");
+                    //$playArea.append
+                    //console.log(suiteName + suiteName + " added to hand!");
+                }
+               //hands update
+               console.log("UPDATE HANDS!!");
+                hand = [];
+                if(whichPlayer == "player 1"){
+                    $p1Hand.html("<div class='pName' id='p1Name' style = 'color: gold'>"+$p1name+"</div><br>");
+                    $p2Hand.html("<div class='pName' id='p2Name'>"+$p2name+"</div><br>");
+                }else{
+                    $p1Hand.html("<div class='pName' id='p1Name'>"+$p1name+"</div><br>");
+                    $p2Hand.html("<div class='pName' id='p2Name' style = 'color: gold'>"+$p2name+"</div><br>");
+                }
+                console.log("HAND CLEARED!");
+                if(whichPlayer == 'player 1'){
+                    console.log("once again, I am player 1.");
+                    hand.push.apply(data.p1Cards);
+                    var cardIndex;
+                    for(cardIndex = 0;cardIndex < data.p1Cards.length; cardIndex++){
+                        console.log(cardIndex);
+                        $p1Hand.append("<input class='card' type=image name='"+cardIndex+"' src='images/cards/"+data.p1Cards[cardIndex].oid+".png'></input>");
+                        //console.log(suiteName + suiteName + " added to hand!");
+                    }
+                    for(cardIndex = 0;cardIndex < data.p2Cards.length; cardIndex++){
+                        $p2Hand.append("<img class='backcard' src='images/cards/Back.png'>");
+                        //console.log(suiteName + suiteName + " added to hand!");
+                    }
+                } else if (whichPlayer == 'player 2'){
+                    console.log("once again, I am player 2.");
+                    hand.push.apply(data.p2Cards);
+                    var cardIndex;
+                    for(cardIndex = 0;cardIndex < data.p2Cards.length; cardIndex++){
+                        console.log(cardIndex);
+                        $p2Hand.append("<input class='card' type=image name='"+cardIndex+"' src='images/cards/"+data.p2Cards[cardIndex].oid+".png'></input>");
+                    }
+                    for(cardIndex = 0;cardIndex < data.p1Cards.length; cardIndex++){
+                        $p1Hand.append("<img class='backcard' src='images/cards/Back.png'>");
+                        //console.log(suiteName + suiteName + " added to hand!");
+                    }
+                }
+                $p2Hand.append("<br><br><br>");
+                $p1Hand.append("<br><br><br>");
+                //when given the list of cards in one player's hand, push to the client.
+                //crib update still needs to be updated!!!!
+
+        });
+        socket.on("cribUpdate",function(data){
+        //cribCard: card to add to crib, pname: used to identify whether card belongs in 
+            console.log("my name is: " + $nickN + " crib update name: " + data.pname);
+            if($nickN == data.pname){
+                $cribItself.append("<img class='backcard' src='images/cards/"+data.cribCardID+".png'></img>");
+            }else{
+                $cribItself.append("<img class='backcard' src='images/cards/Back.png'></img>");
+            }
+        });
+        socket.on("updateScore", function(data){
+            console.log("UPDATING SCORE!!!");
+            if(whichPlayer == "player 1"){
+            $p2Score.html("<h4>"+data.p2Score+"</h4>");
+            $p1Score.html("<h4 style = 'color: gold'>"+data.p1Score+"</h4>");
+            }else{
+            $p1Score.html("<h4>"+data.p1Score+"</h4>");
+            $p2Score.html("<h4 style = 'color: gold'>"+data.p2Score+"</h4>");
+            }
+        });
+        socket.on("updatePlay", function(data){
+                console.log("UPDATING PLAY!!!!!!!");
+                playCards = [];
+                $playArea.html("<div class='pName' id='parea'>"+"The Play"+"</div><br>");
+                playCards.push.apply(data.pCards);
+                console.log("DCARDS.LENGTH! : " + data.dCards.length);
+                console.log("THIS IS TO TEST IF THIS FUCKING WORKS");
+                for(var i = 0; i < data.dCards.length; i++){
+                        $playArea.append("<img class='darkcard' src='images/cards/"+data.dCards[i].oid+".png'></img>");
+                }
+                for(cardIndex = 0;cardIndex < data.pCards.length; cardIndex++){
+                    console.log("ADDING CARDS TO BOARD!!!!");
+                    if(darkcards > 0){
+                    } else{
+                        $playArea.append("<img class='backcard' src='images/cards/"+data.pCards[cardIndex].oid+".png'></img>");
+                    }
+                    //console.log(suiteName + suiteName + " added to hand!");
+                }
+                //$playArea.append("<input class='card' type=image name='testcard' src='images/cards/Back.png'></input>");
+        });
+        socket.on("updateCrib", function(data){
+            //get isCrib and set align top if player 2, set align bottom if player 1
+                console.log("UPDATING CRIB!!!!!!!");
+                //playCards = [];
+                //$cribArea.html("<div class='pName' id='cribTitle'>"+"The Crib"+"</div><br>");
+                //playCards.push.apply(data);
+                //console.log(playCards);
+                if(data.whichPlayer == whichPlayer){
+                    $cribItself.append("<img class='backcard' src='images/cards/"+data.card.oid+".png'></img>");
+                }else{
+                    $cribItself.append("<img class='backcard' src='images/cards/Back.png'></img>");
+                }
+                //$playArea.append("<input class='card' type=image name='testcard' src='images/cards/Back.png'></input>");
+        });
+        socket.on("fillHands", function(data){
+            console.log("UPDATE HANDS!!");
+            hand = [];
+            if(whichPlayer == "player 1"){
+                $p1Hand.html("<div class='pName' id='p1Name' style = 'color: gold'>"+$p1name+"</div><br>");
+                $p2Hand.html("<div class='pName' id='p2Name'>"+$p2name+"</div><br>");
+            }else{
+                $p1Hand.html("<div class='pName' id='p1Name'>"+$p1name+"</div><br>");
+                $p2Hand.html("<div class='pName' id='p2Name' style = 'color: gold'>"+$p2name+"</div><br>");
+            }
+            console.log("HAND CLEARED!");
+            if(whichPlayer == 'player 1'){
+                console.log("once again, I am player 1.");
+                hand.push.apply(data.p1Cards);
+                var cardIndex;
+                for(cardIndex = 0;cardIndex < data.p1Cards.length; cardIndex++){
+                    console.log(cardIndex);
+                    $p1Hand.append("<input class='card' type=image name='"+cardIndex+"' src='images/cards/"+data.p1Cards[cardIndex].oid+".png'></input>");
+                    //console.log(suiteName + suiteName + " added to hand!");
+                }
+                for(cardIndex = 0;cardIndex < data.p2Cards.length; cardIndex++){
+                    $p2Hand.append("<img class='backcard' src='images/cards/Back.png'>");
+                    //console.log(suiteName + suiteName + " added to hand!");
+                }
+            } else if (whichPlayer == 'player 2'){
+                console.log("once again, I am player 2.");
+                hand.push.apply(data.p2Cards);
+                var cardIndex;
+                for(cardIndex = 0;cardIndex < data.p2Cards.length; cardIndex++){
+                    console.log(cardIndex);
+                    $p2Hand.append("<input class='card' type=image name='"+cardIndex+"' src='images/cards/"+data.p2Cards[cardIndex].oid+".png'></input>");
+                }
+                for(cardIndex = 0;cardIndex < data.p1Cards.length; cardIndex++){
+                    $p1Hand.append("<img class='backcard' src='images/cards/Back.png'>");
+                    //console.log(suiteName + suiteName + " added to hand!");
+                }
+            }
+            $p2Hand.append("<br><br><br>");
+            $p1Hand.append("<br><br><br>");
+            //when given the list of cards in one player's hand, push to the client.
+        });
+        /*
+        socket.on("cardDrawn", function(data){
+            var suiteName = data.card.substr(0,data.indexOf(' '));
+            var suiteNum = data.card.substr(suiteName.length,data.length);
+            if(data.whichPlayer == this.whichPlayer && this.whichPlayer == "player 1"){
+                $p1Hand.append("<input class='card' type=image src='images/cards/"+suiteName+suiteNum+".png'></input>");
+                $p2Hand.append("<img class='backcard' src='images/cards/Back.png'>");
+            } else if(data.whichPlayer == this.whichPlayer && this.whichPlayer == "player 2"){
+                $p2Hand.append("<input class='card' type=image src='images/cards/"+suiteName+suiteNum+".png'></input>");
+                $p1Hand.append("<img class='backcard' src='images/cards/Back.png'>");
+            }
+        });*/
+    });
+    /*
+    scoring a crib hand
+        4 cards + 1 turn-up card
+    each way that you can make 15 scores two points
+    each sdistinct run of 3 scores 3 points unless it is within a run of 4 in which case it scores 4
+    each distinct pair scores 2
+    6,6,6,2 scores 3 pairs, 6,6,/,6,6/6, ,6
+    4 of same suit (flush) scores 4 or 5 if, specifically if 4 first turn-up card(TUC) is same suit 
+    Jack of same suit as TUC is +1 "one for his knob"
+    */

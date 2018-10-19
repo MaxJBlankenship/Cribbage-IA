@@ -1,0 +1,302 @@
+body {
+  padding: 10px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #3d4353
+}
+
+a {
+  color: #00B7FF;
+}
+.clogo {
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+}
+.col {
+    margin: auto;
+    width: 35%;
+    background-color: #606672;
+    border: 3px solid #7b8191;
+    border-radius: 5px;
+    padding: 10px;
+}
+.priv {
+    width: 100%;
+    background-color: #367f4c;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+}
+.priv:hover {
+    background-color: #327748;
+}
+.how {
+    width: 100%;
+    background-color: #367ced;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.how:hover {
+    background-color: #17499b;
+}
+.play {
+    width: 100%;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.play:hover {
+    background-color: #45a049;
+}
+.user {
+    background-color: #7b8191;
+    border: 1px #7b8191;
+    color: white;
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.reqbox {
+    height: 400px;
+    width: 15%;
+    background-color: #606672;
+    border: 3px solid #7b8191;
+    border-radius: 5px;
+    padding: 10px;
+    overflow-y: scroll;
+    display: inline-block;
+    margin-left: 10px;
+    color: white;
+}
+.v1 {
+    border-left: 6px dotted #2d323d;
+    height: 100px;
+    display: inline-block;
+}
+.userbox {
+      height: 400px;
+    width: 15%;
+    background-color: #606672;
+    border: 3px solid #7b8191;
+    border-radius: 5px;
+    padding: 10px;
+    overflow-y: scroll;
+    display: inline-block;
+    float: left;
+    margin-left: 1%;
+    /* left: -200px; */
+    color: white;
+}
+.chatbox {
+    margin-left: 8px;
+    /* margin-right: -100%; */
+    height: 400px;
+    width: 61%;
+    float: left;
+    background-color: #606672;
+    border: 3px solid #7b8191;
+    border-radius: 5px;
+    padding: 10px;
+    display: inline-block;
+}
+.chatarea {
+    background-color: #fdfeff;
+    width: 96%;
+    height: 230px;
+    overflow-y: scroll;
+    overflow-wrap: break-word;
+    border: 3px solid #7b8191;
+    border-radius: 5px;
+    padding: 0px 10px;
+}
+.lob {
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+.chattext {
+    border: 1px #7b8191;
+    width: 82%;
+    padding: 8px 8px;
+    border-radius: 4px;
+    margin: 8px 5px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.chatsubmit {
+    width: 15%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 5px;
+    margin: 8px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    float: right;
+}
+.reqarea {
+    overflow-y: scroll;
+}
+.request {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 2px -2px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.request:hover {
+    background-color: #45a049;
+}
+.requestbox {
+    width: 90%;
+    background-color: white;
+    border-radius: 4px;
+    border-color: black;
+    color: black;
+    padding: 2px 0px 5px 5px;
+}
+.cribbox {
+    display: none;
+    border: 6px dotted #2d323d;
+    border-radius: 13px;
+}
+.p2CribBox {
+    border: 5px double #3d4353;
+    background-color: #2d323d;
+    min-height: 200px;
+    width: 630px;
+    margin-left: 15%;
+}
+.p1CribBox {
+    border: 5px double #3d4353;
+    background-color: #2d323d;
+    min-height: 200px;
+    width: 630px;
+    margin-left: 15%;
+}
+.scorebox {
+    text-align: center;
+     margin-bottom: -100px;
+    margin-top: 30px;
+}
+.scoreplace{
+      display: inline-block;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 50px;
+    margin-left: 5%;
+    margin-right: 5%;
+    font-weight: bold;
+    font-style: italic;
+    color: white;
+    vertical-align: 50%;
+
+}
+.pHandBox {
+    border: 5px double #3d4353;
+    background-color: #2a2f3a;
+    min-height: 200px;
+    width: 630px;
+    margin-left: 15%;
+}
+.pA {
+    border: 5px double #3d4353;
+    background-color: #2d323d;
+    min-height: 168px;
+    min-width: 900px;
+}
+.tu {
+    border: 5px double #3d4353;
+    background-color: #2a2f3a;
+}
+.pName{
+    font-size: 24px;
+	float:left;
+	padding:0 5px;
+    color: white;
+	margin:-20px 0 0 30px;
+    background-color: #2d323d;
+    font-family: "Times New Roman", Times, serif;
+}
+.dcard {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: center;
+}
+.dcard:hover {
+    align-self: center;
+    background-color: #45a049;
+}
+.darkcard {
+    cursor: not-allowed;
+    background-color: black;
+    opacity: 0.3;
+}
+.card {
+    display: inline;
+    margin-left: auto;
+    margin-right: auto;
+    transition: transform .2s;
+}
+.card:hover{
+    align-self: center;
+    transform: scale(1.5);
+}
+.backcard:hover {
+    cursor: not-allowed;
+}
+.pH {
+    display: inline-block;
+    min-height: 150px;
+    margin-left: 15%;
+}
+.pHA {
+    border: 5px double #3d4353;
+    background-color: #383f50;
+    min-height: 200px;
+    min-width: 900px;
+}
+
+.cribItself {
+    vertical-align: middle;
+    display: inline-block;
+    min-height: 150px;
+}
+.cribBoard {
+    transform: scale(1.5);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 60%;
+    height: auto;
+    width: auto;
+
+}

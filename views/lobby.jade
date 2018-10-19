@@ -1,0 +1,14 @@
+extends index.jade
+block lobby
+    style ::placeholder{color:white;opacity:0.5;}
+    img(class = "clogo" src="images/cribbage.png")
+    br
+    br
+    #container.col
+      form(id='play',action='javascript:hide();')
+        h1(style = "color: white; padding: 2px; display: inline-block; ") Welcome to Cribbage!
+        br
+        input(id = "name", class = "user", type='text', name='form', value='',placeholder='Original, hilarious username...')
+        br
+        input(class = "play", type='submit', value='Play Game')
+        input(class = "priv", type='submit', value='Private Game')
