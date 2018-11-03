@@ -81,6 +81,7 @@ class Cribbage {
         }
         this.turnUp = this.cDeck.getRandomCard(1)[0]; //turn up card is generated here too
         console.log("TURNUPCARD GENERATED!!! : " + this.turnUp.oid);
+        console.log("test for version control...");
     }
     nextTurn() {
         this.reTurn += 1;
