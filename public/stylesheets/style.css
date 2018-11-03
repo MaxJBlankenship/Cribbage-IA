@@ -260,6 +260,10 @@ a {
     background-color: black;
     opacity: 0.3;
 }
+.turnupcard {
+    cursor: not-allowed;
+    border: 30px double rgb(207, 198, 61);
+}
 .card {
     display: inline;
     margin-left: auto;

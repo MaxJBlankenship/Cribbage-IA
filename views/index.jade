@@ -338,10 +338,15 @@ script.
             //gameStateUpdate passes an object containing the following things, crib, p1Cards, p2Cards, turnUpCard, p1Score, p2Score, pCards, and thus dCards as well.
             
             //turnup update
+
             console.log("TURNUP UPDATED!!");
-            console.log("recieved a turn up card!! " + data.oid);
+            console.log("recieved a turn up card!! " + data.turnUpCard.oid);
             $('#turnUpCard').html("<img class='backcard' src='images/cards/"+data.turnUpCard.oid+".png'></img>");
+
+
             //score update
+
+
             console.log("UPDATING SCORE!!!");
             if(whichPlayer == "player 1"){
                 $p2Score.html("<h4>"+data.p2Score+"</h4>");
@@ -350,68 +355,71 @@ script.
                 $p1Score.html("<h4>"+data.p1Score+"</h4>");
                 $p2Score.html("<h4 style = 'color: gold'>"+data.p2Score+"</h4>");
             }
+
+
             //play update
+
+
+
             console.log("UPDATING PLAY!!!!!!!");
-                playCards = [];
-                $playArea.html("<div class='pName' id='parea'>"+"The Play"+"</div><br>");
-                playCards = data.pCards.slice();
-                var darkcards = [];
-                //console.log(playCards);
-                //if darkcards > 0, set class to darkcard, subtract darkcards by 1
-                darkcards = data.dCards.slice();
-                for(var i = 0; i < data.dCards.length; i++){
-                        $playArea.append("<img class='darkcard' src='images/cards/"+data.dCards[i].oid+".png'></img>");
-                    
-                }
-                for(cardIndex = 0;cardIndex < data.pCards.length; cardIndex++){
-                    console.log("ADDING CARDS TO BOARD!!!!");
-                        if(data.dCards.length > 0){
-                        }
-                        $playArea.append("<img class='backcard' src='images/cards/"+data.pCards[cardIndex].oid+".png'></img>");
-                    //$playArea.append
+            playCards = [];
+            $playArea.html("<div class='pName' id='parea'>"+"The Play"+"</div><br>");
+            //playCards = data.pCards.slice();
+            var darkcards = [];
+            //console.log(playCards);
+            //if darkcards > 0, set class to darkcard, subtract darkcards by 1
+            //darkcards = data.dCards.slice();
+            console.log("DATARECIEVED LENGTH OF D CARDS: "+data.dCards.length);
+            console.log("DATARECIEVED LENGTH OF P CARDS: "+data.pCards.length);
+            for(var i = 0; i < data.dCards.length; i++){
+                $playArea.append("<img class='darkcard' src='images/cards/"+data.dCards[i].oid+".png'></img>");
+            }
+            for(var cardIndex = 0;cardIndex < data.pCards.length; cardIndex++){
+                console.log("ADDING CARDS TO BOARD!!!!");
+                $playArea.append("<img class='backcard' src='images/cards/"+data.pCards[cardIndex].oid+".png'></img>");
+                //$playArea.append
+                //console.log(suiteName + suiteName + " added to hand!");
+            }
+            console.log("UPDATE HANDS!!");
+            hand = [];
+            if(whichPlayer == "player 1"){
+                $p1Hand.html("<div class='pName' id='p1Name' style = 'color: gold'>"+$p1name+"</div><br>");
+                $p2Hand.html("<div class='pName' id='p2Name'>"+$p2name+"</div><br>");
+            }else{
+                $p1Hand.html("<div class='pName' id='p1Name'>"+$p1name+"</div><br>");
+                $p2Hand.html("<div class='pName' id='p2Name' style = 'color: gold'>"+$p2name+"</div><br>");
+            }
+            console.log("HAND CLEARED!");
+            if(whichPlayer == 'player 1'){
+                console.log("once again, I am player 1.");
+                hand.push.apply(data.p1Cards);
+                //var cardIndex;
+                for(var cardIndex = 0;cardIndex < data.p1Cards.length; cardIndex++){
+                    console.log(cardIndex);
+                    $p1Hand.append("<input class='card' type=image name='"+cardIndex+"' src='images/cards/"+data.p1Cards[cardIndex].oid+".png'></input>");
                     //console.log(suiteName + suiteName + " added to hand!");
                 }
-               //hands update
-               console.log("UPDATE HANDS!!");
-                hand = [];
-                if(whichPlayer == "player 1"){
-                    $p1Hand.html("<div class='pName' id='p1Name' style = 'color: gold'>"+$p1name+"</div><br>");
-                    $p2Hand.html("<div class='pName' id='p2Name'>"+$p2name+"</div><br>");
-                }else{
-                    $p1Hand.html("<div class='pName' id='p1Name'>"+$p1name+"</div><br>");
-                    $p2Hand.html("<div class='pName' id='p2Name' style = 'color: gold'>"+$p2name+"</div><br>");
+                for(cardIndex = 0;cardIndex < data.p2Cards.length; cardIndex++){
+                    $p2Hand.append("<img class='backcard' src='images/cards/Back.png'>");
+                    //console.log(suiteName + suiteName + " added to hand!");
                 }
-                console.log("HAND CLEARED!");
-                if(whichPlayer == 'player 1'){
-                    console.log("once again, I am player 1.");
-                    hand.push.apply(data.p1Cards);
-                    var cardIndex;
-                    for(cardIndex = 0;cardIndex < data.p1Cards.length; cardIndex++){
-                        console.log(cardIndex);
-                        $p1Hand.append("<input class='card' type=image name='"+cardIndex+"' src='images/cards/"+data.p1Cards[cardIndex].oid+".png'></input>");
-                        //console.log(suiteName + suiteName + " added to hand!");
-                    }
-                    for(cardIndex = 0;cardIndex < data.p2Cards.length; cardIndex++){
-                        $p2Hand.append("<img class='backcard' src='images/cards/Back.png'>");
-                        //console.log(suiteName + suiteName + " added to hand!");
-                    }
-                } else if (whichPlayer == 'player 2'){
-                    console.log("once again, I am player 2.");
-                    hand.push.apply(data.p2Cards);
-                    var cardIndex;
-                    for(cardIndex = 0;cardIndex < data.p2Cards.length; cardIndex++){
-                        console.log(cardIndex);
-                        $p2Hand.append("<input class='card' type=image name='"+cardIndex+"' src='images/cards/"+data.p2Cards[cardIndex].oid+".png'></input>");
-                    }
-                    for(cardIndex = 0;cardIndex < data.p1Cards.length; cardIndex++){
-                        $p1Hand.append("<img class='backcard' src='images/cards/Back.png'>");
-                        //console.log(suiteName + suiteName + " added to hand!");
-                    }
+            } else if (whichPlayer == 'player 2'){
+                console.log("once again, I am player 2.");
+                hand.push.apply(data.p2Cards);
+                var cardIndex;
+                for(cardIndex = 0;cardIndex < data.p2Cards.length; cardIndex++){
+                    console.log(cardIndex);
+                    $p2Hand.append("<input class='card' type=image name='"+cardIndex+"' src='images/cards/"+data.p2Cards[cardIndex].oid+".png'></input>");
                 }
-                $p2Hand.append("<br><br><br>");
-                $p1Hand.append("<br><br><br>");
-                //when given the list of cards in one player's hand, push to the client.
-                //crib update still needs to be updated!!!!
+                for(cardIndex = 0;cardIndex < data.p1Cards.length; cardIndex++){
+                    $p1Hand.append("<img class='backcard' src='images/cards/Back.png'>");
+                    //console.log(suiteName + suiteName + " added to hand!");
+                }
+            }
+            $p2Hand.append("<br><br><br>");
+            $p1Hand.append("<br><br><br>");
+            //when given the list of cards in one player's hand, push to the client.
+            //crib update still needs to be updated!!!!
 
         });
         socket.on("cribUpdate",function(data){
@@ -437,9 +445,12 @@ script.
                 console.log("UPDATING PLAY!!!!!!!");
                 playCards = [];
                 $playArea.html("<div class='pName' id='parea'>"+"The Play"+"</div><br>");
-                playCards.push.apply(data.pCards);
+                playCards.push.apply(data.pCards); //data.turnup is pushed first ALWAYS!!! make a new card class with the folliowing::: border: 30px double #1C6EA4;
+                $playArea.append("<img class='turnupcard' src='images/cards/"+data.turnUpCard.oid+".png'></img>");
+                
                 console.log("DCARDS.LENGTH! : " + data.dCards.length);
                 console.log("THIS IS TO TEST IF THIS FUCKING WORKS");
+
                 for(var i = 0; i < data.dCards.length; i++){
                         $playArea.append("<img class='darkcard' src='images/cards/"+data.dCards[i].oid+".png'></img>");
                 }
