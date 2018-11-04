@@ -262,7 +262,8 @@ a {
 }
 .turnupcard {
     cursor: not-allowed;
-    border: 30px double rgb(207, 198, 61);
+    outline: 6px ridge rgb(207, 198, 61);
+    outline-offset: -6px;
 }
 .card {
     display: inline;

@@ -341,7 +341,7 @@ script.
 
             console.log("TURNUP UPDATED!!");
             console.log("recieved a turn up card!! " + data.turnUpCard.oid);
-            $('#turnUpCard').html("<img class='backcard' src='images/cards/"+data.turnUpCard.oid+".png'></img>");
+            //$('#turnUpCard').html("<img class='backcard' src='images/cards/"+data.turnUpCard.oid+".png'></img>");
 
 
             //score update
@@ -363,12 +363,15 @@ script.
 
             console.log("UPDATING PLAY!!!!!!!");
             playCards = [];
+            
+                
             $playArea.html("<div class='pName' id='parea'>"+"The Play"+"</div><br>");
             //playCards = data.pCards.slice();
             var darkcards = [];
             //console.log(playCards);
             //if darkcards > 0, set class to darkcard, subtract darkcards by 1
             //darkcards = data.dCards.slice();
+            $playArea.append("<img class='turnupcard' src='images/cards/"+data.turnUpCard.oid+".png'></img>");
             console.log("DATARECIEVED LENGTH OF D CARDS: "+data.dCards.length);
             console.log("DATARECIEVED LENGTH OF P CARDS: "+data.pCards.length);
             for(var i = 0; i < data.dCards.length; i++){
@@ -446,8 +449,7 @@ script.
                 playCards = [];
                 $playArea.html("<div class='pName' id='parea'>"+"The Play"+"</div><br>");
                 playCards.push.apply(data.pCards); //data.turnup is pushed first ALWAYS!!! make a new card class with the folliowing::: border: 30px double #1C6EA4;
-                $playArea.append("<img class='turnupcard' src='images/cards/"+data.turnUpCard.oid+".png'></img>");
-                
+
                 console.log("DCARDS.LENGTH! : " + data.dCards.length);
                 console.log("THIS IS TO TEST IF THIS FUCKING WORKS");
 
