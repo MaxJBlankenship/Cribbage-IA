@@ -358,19 +358,27 @@ class Cribbage {
                 score += 2;
             }
         }
-        console.log("SCORE IS: " + score);
-
+        
+        //PAIRS, TRIPLES AND QUADRUPLES CHECK
+        var score = 0;
         for(var i = 0; i < handSorted.length; i++){
-            if(handSorted[i].getNum() == handSorted[i + 1].getNum()){
+            if(handSorted[i]  == handSorted[i + 1].getNum()  && handSorted[i + 1].getNum()  != null){
                 score += 3;
-                if(handSorted[i].getNum() == handSorted[i + 2].getNum()){
+                if(handSorted[i]  == handSorted[i + 2].getNum() && handSorted[i + 2].getNum()  != null){
                     score += 3;
-                    if(handSorted[i].getNum() == handSorted[i + 3].getNum()){
+                    if(handSorted[i]  == handSorted[i + 3].getNum() && handSorted[i + 3].getNum()  != null){
                         score += 6;
+                        i += 3;
+                    } else {
+                        i += 2
                     }
+                } else {
+                    i += 1;
                 }
             }
         }
+        console.log("score is: " + score);
+        
 
 
 

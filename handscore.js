@@ -1,4 +1,4 @@
-var handSorted = [4,5,5,10,10];
+var handSorted = [4,4,5,9,10];
 var score = 0;
 for(var i = 0; i < handSorted.length; i++){
     if(handSorted[i]  == handSorted[i + 1]  && handSorted[i + 1]  != null){
