@@ -307,9 +307,9 @@ class Cribbage {
         }
         return score;
     } 
-    scoreHand(hand) { //used to score crib as well, during part of the game when is empty is true, check which player has c
-        //check for runs
-        //turnup is checked with hand and also crib then added to score
+    scoreHand(hand, isCrib) {
+        //isCrib, 1  : crib check
+        //isCrib, 0  : hand check
 
         //RUN CHECK
         score += this.scoreRun(handSorted);
@@ -408,17 +408,39 @@ class Cribbage {
         var flushhand = this.handSort(hand);
         var flushsuite = flushhand[0].getSuite();
         var flushpoints = 4;
-        for(var i = 0; i < flushhand.length; i++){
-            if(flushhand[i].getSuite != flushsuite){
-                flushpoints = 0;
-            }
-        }
-        if(this.turnUp.getSuite() == flushsuite && flushpoints != 0){
-            flushpoints = 5;
+        switch (isCrib) {
+            case 1: //1 means crib check which indicates that a flush of all cards is required for a flush/
+                flushsuite = handSorted[0].getSuite();
+                for(var i = 0; i < handSorted.length; i++){
+                    if(handSorted[i].getSuite() != flushsuite){
+                        flushpoints = 0;
+                    }
+                }
+                break;
+        
+            default:
+                var flushhand = this.handSort(hand);
+                var flushsuite = flushhand[0].getSuite();
+                var flushpoints = 4;
+                for(var i = 0; i < flushhand.length; i++){
+                    if(flushhand[i].getSuite() != flushsuite){
+                        flushpoints = 0;
+                    }
+                }
+                break;
         }
         score += flushpoints;
-        
-        
+
+        //KNOB CHECK
+
+        for(var i = 0; i < flushhand.length; i++){
+            if(flushhand[i].getNum() == "11"){
+                if(flushhand[i].getSuite() == this.turnUp.getSuite()){
+                    score += 1;
+                }
+            }
+        }
+
         //RETURN SCORE
         console.log("SCORE IS: " + score);
         return score;
