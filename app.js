@@ -363,9 +363,9 @@ class Cribbage {
         var score = 0;
         for(var i = 0; i < handSorted.length; i++){
             if(handSorted[i]  == handSorted[i + 1].getNum()  && handSorted[i + 1].getNum()  != null){
-                score += 3;
+                score += 2;
                 if(handSorted[i]  == handSorted[i + 2].getNum() && handSorted[i + 2].getNum()  != null){
-                    score += 3;
+                    score += 4;
                     if(handSorted[i]  == handSorted[i + 3].getNum() && handSorted[i + 3].getNum()  != null){
                         score += 6;
                         i += 3;
@@ -379,11 +379,46 @@ class Cribbage {
         }
         console.log("score is: " + score);
         
+        //UNIQUE RUNS CHECK
+
+        for(var i = 0; i < handSorted.length; i++){
+            if(handSorted[i].getNum() + 1 == handSorted[i + 1].getNum()  && handSorted[i + 1]  != null){
+                //score += 1;
+                if(handSorted[i].getNum() + 2  == handSorted[i + 2].getNum() && handSorted[i + 2]  != null){
+                    score += 3;
+                    if(handSorted[i].getNum() + 3 == handSorted[i + 3].getNum() && handSorted[i + 3]  != null){
+                        score += 1;
+                        if(handSorted[i].getNum() + 4 == handSorted[i + 4].getNum() && handSorted[i + 4]  != null){
+                            score += 1;
+                            i += 4;
+                        } else {
+                            i += 3;
+                        }
+                    } else {
+                        i += 2
+                    }
+                } else {
+                    i += 1;
+                }
+            }
+        }
+        console.log("score is: " + score);
         
-
-
-
-
+        //FLUSH CHECK
+        var flushhand = this.handSort(hand);
+        var flushsuite = flushhand[0].getSuite();
+        var flushpoints = 4;
+        for(var i = 0; i < flushhand.length; i++){
+            if(flushhand[i].getSuite != flushsuite){
+                flushpoints = 0;
+            }
+        }
+        if(this.turnUp.getSuite() == flushsuite && flushpoints != 0){
+            flushpoints = 5;
+        }
+        score += flushpoints;
+        
+        
         //RETURN SCORE
         console.log("SCORE IS: " + score);
         return score;
