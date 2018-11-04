@@ -310,14 +310,20 @@ class Cribbage {
     scoreHand(hand) { //used to score crib as well, during part of the game when is empty is true, check which player has c
         //check for runs
         //turnup is checked with hand and also crib then added to score
-        var score = 0;
-        var handSorted = this.handSort(hand);
+
+        //RUN CHECK
         score += this.scoreRun(handSorted);
+
+
+        //FIFTEEN CHECK
+        var handSorted = hand.push(this.turnUp);
+        //score += this.scoreRun(handSorted);
         var result = []; //full list of bitstrings
+        var score = 0;
         result.length = 0;
-        for (var t = 0; t < Math.pow(2, hand.length); t++) {
+        for (var t = 0; t < Math.pow(2, handSorted.length); t++) {
             var combo = []; //temp bitstring of bits
-            for (var w = 0; w < hand.length; w++) {
+            for (var w = 0; w < handSorted.length; w++) {
                 //shift bit and and it with 1
                 if (((t >> w) & 1))
                     combo.push(1);
@@ -330,25 +336,47 @@ class Cribbage {
         }
         //console.log("RESULT LENGTH!! : "+ result.length);
         for (var r = 0; r < result.length; r++) {
-            this.tofif = 0;
+            console.log("tofif reset");
+            var tofif = 0;
+            var addtofif = 0;
             for (var v = 0; v < result[r].length; v++) {
                 if (result[r][v] == 1) {
-                    if (parseInt(handSorted[v]) > 10) {
-                        this.addtofif = 10;
+                    if (parseInt(handSorted[v].getNum()) > 10) {
+                        addtofif = 10;
                     } else {
-                        this.addtofif = parseInt(handSorted[v]);
+                        addtofif = parseInt(handSorted[v].getNum());
                     }
-                    this.tofif += this.addtofif;
+                    console.log("adding " + tofif + " with " + addtofif);
+                    tofif += addtofif;
                     //console.log("result r: " + result[r] + " slot v:" +  handforscore[v].getNum());
                 }
             }
             //console.log("fift check is " + this.tofif);
-            if (this.tofif == 15) {
-                this.tofif = 0;
+            if (tofif == 15) {
+                tofif = 0;
                 console.log("fifteen sum found!");
                 score += 2;
             }
         }
+        console.log("SCORE IS: " + score);
+
+        for(var i = 0; i < handSorted.length; i++){
+            if(handSorted[i].getNum() == handSorted[i + 1].getNum()){
+                score += 3;
+                if(handSorted[i].getNum() == handSorted[i + 2].getNum()){
+                    score += 3;
+                    if(handSorted[i].getNum() == handSorted[i + 3].getNum()){
+                        score += 6;
+                    }
+                }
+            }
+        }
+
+
+
+
+        //RETURN SCORE
+        console.log("SCORE IS: " + score);
         return score;
     }   
 }
