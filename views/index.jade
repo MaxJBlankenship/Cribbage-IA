@@ -295,7 +295,8 @@ script.
             $('#lobby').hide();
             $('#crib').show();
             //$hwel.append("<p>WELCOME, " + data.player1 + " AND " + data.player2 + " IN ROOM: "+ data.roomCount+"</p>");
-            roomName = data.roomCount;            
+            roomName = data.roomCount;  
+            $playHands.html("");          
             $playHands.append("<div id='p2HA"+roomName+"' class = 'pHA'><div id='p2Hand"+roomName+"'"+"class = 'pHandBox'><div class='pName' id='p2Name'>"+data.player2+"</div></div></div><div id='playArea"+roomName+"' class='pA'><div class='pName' id='parea'>"+"The Play"+"</div><br><br><br><br><br><br></div><div id='p1HA"+roomName+"' class = 'pHA'><div id='p1Hand"+roomName+"'"+"class = 'pHandBox'><div class='pName' id='p1Name'>"+data.player1+"</div></div></div>");
             //check which player has the crib, set to global var isCrib
             $p2HA = $("#p2HA"+roomName);

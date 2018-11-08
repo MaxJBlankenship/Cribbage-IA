@@ -144,21 +144,35 @@ class Cribbage {
     }
     scoreRun(arr) { //checks for runs
         var score = 0;
-        var checkcards = [];
-        for (var i = 0; i < arr.length; i++) {
-            checkcards.push(arr[i].getNum());
-        }
-        checkcards = this.handSort(checkcards);
-        for (var i = 0; i < checkcards.length - 1; i++) {
-            if (checkcards[i]+1 != checkcards[i + 1]) {
-                return 0;
+        console.log("Arr is this case:: " + arr);
+        var handSorted = [];
+        /*
+        for(var i = 0; i < arr.length; i++){
+            handSorted.push(arr[i]);
+        }*/
+        handSorted = this.handSort(handSorted);
+        for(var i = 0; i < handSorted.length; i++){
+            if(handSorted[i].getNum() + 1 == handSorted[i + 1].getNum()  && handSorted[i + 1]  != null){
+                //score += 1;
+                if(handSorted[i].getNum() + 2  == handSorted[i + 2].getNum() && handSorted[i + 2]  != null){
+                    score += 3;
+                    if(handSorted[i].getNum() + 3 == handSorted[i + 3].getNum() && handSorted[i + 3]  != null){
+                        score += 1;
+                        if(handSorted[i].getNum() + 4 == handSorted[i + 4].getNum() && handSorted[i + 4]  != null){
+                            score += 1;
+                            i += 4;
+                        } else {
+                            i += 3;
+                        }
+                    } else {
+                        i += 2
+                    }
+                } else {
+                    i += 1;
+                }
             }
-            score++;
         }
-        if (score >= 3) {
-            return score;
-        }
-        return 0;
+        return score;
     }
     isEmpty() {
         if (this.p1.getHand().length == 0 & this.p2.getHand().length == 0) {
@@ -247,7 +261,7 @@ class Cribbage {
                 console.log("wow player needed that exact card!! GO CALLED!!");
                 this.callGo(pName);
                 this.killCards();
-                this.nextTurn();
+                //this.nextTurn();
             }
             this.nextTurn(); //next turn is called twice if go is called.
             console.log("Card successfully played!! Turn is: " + this.reTurn);
@@ -257,7 +271,7 @@ class Cribbage {
             if(this.otherPlayerCantGo(pName)){
                 this.callGo(pName);
                 this.killCards();
-                this.nextTurn();
+                //this.nextTurn();
             }
             return true;
         }
@@ -290,7 +304,7 @@ class Cribbage {
         var score = 0;
         if(this.getBoardSum() > 0){
             if (this.getBoardSum() + card.getNum() == 31) {
-                score += 3;
+                score += 1;
             }
             if (this.getBoardSum() + card.getNum() == 15) {
                 score += 2;
@@ -300,23 +314,37 @@ class Cribbage {
             var cardsuite = this.pCards.pop();
             var prevcardsuite = this.pCards.pop();
             console.log("card suite : " + cardsuite.getNum() + " p cards top suite : " + prevcardsuite.getNum());
-            if (cardsuite.getNum() == prevcardsuite.getNum()) {
+            if (cardsuite.getRealNum() == prevcardsuite.getRealNum()) {
                 score += 2;
             }
             this.pCards.push(prevcardsuite);
         }
         return score;
     } 
+    boardCheckPCards(){ //true means the round ended. use this to check if any of the players won yet.
+        if(this.isTurn(this.p1.name) && this.p1.hand.length == 0){
+            if(this.p2.hand > 0){
+                this.p2.score++;
+            }
+            return true;
+        } else if(this.isTurn(this.p2.name) && this.p2.hand.length == 0){
+            if(this.p1.hand > 0){
+                this.p1.score++;
+            }
+            return true;
+        }
+        return false;
+    }
     scoreHand(hand, isCrib) {
         //isCrib, 1  : crib check
         //isCrib, 0  : hand check
 
         //RUN CHECK
-        score += this.scoreRun(handSorted);
-
 
         //FIFTEEN CHECK
         var handSorted = hand.push(this.turnUp);
+
+        score += this.scoreRun(handSorted);
         //score += this.scoreRun(handSorted);
         var result = []; //full list of bitstrings
         var score = 0;
@@ -362,11 +390,11 @@ class Cribbage {
         //PAIRS, TRIPLES AND QUADRUPLES CHECK
         var score = 0;
         for(var i = 0; i < handSorted.length; i++){
-            if(handSorted[i]  == handSorted[i + 1].getNum()  && handSorted[i + 1].getNum()  != null){
+            if(handSorted[i]  == handSorted[i + 1].getRealNum()  && handSorted[i + 1].getRealNum()  != null){
                 score += 2;
-                if(handSorted[i]  == handSorted[i + 2].getNum() && handSorted[i + 2].getNum()  != null){
+                if(handSorted[i]  == handSorted[i + 2].getRealNum() && handSorted[i + 2].getRealNum()  != null){
                     score += 4;
-                    if(handSorted[i]  == handSorted[i + 3].getNum() && handSorted[i + 3].getNum()  != null){
+                    if(handSorted[i]  == handSorted[i + 3].getRealNum() && handSorted[i + 3].getRealNum()  != null){
                         score += 6;
                         i += 3;
                     } else {
@@ -382,13 +410,13 @@ class Cribbage {
         //UNIQUE RUNS CHECK
 
         for(var i = 0; i < handSorted.length; i++){
-            if(handSorted[i].getNum() + 1 == handSorted[i + 1].getNum()  && handSorted[i + 1]  != null){
+            if(handSorted[i].getRealNum() + 1 == handSorted[i + 1].getRealNum()  && handSorted[i + 1]  != null){
                 //score += 1;
-                if(handSorted[i].getNum() + 2  == handSorted[i + 2].getNum() && handSorted[i + 2]  != null){
+                if(handSorted[i].getRealNum() + 2  == handSorted[i + 2].getRealNum() && handSorted[i + 2]  != null){
                     score += 3;
-                    if(handSorted[i].getNum() + 3 == handSorted[i + 3].getNum() && handSorted[i + 3]  != null){
+                    if(handSorted[i].getRealNum() + 3 == handSorted[i + 3].getRealNum() && handSorted[i + 3]  != null){
                         score += 1;
-                        if(handSorted[i].getNum() + 4 == handSorted[i + 4].getNum() && handSorted[i + 4]  != null){
+                        if(handSorted[i].getRealNum() + 4 == handSorted[i + 4].getRealNum() && handSorted[i + 4]  != null){
                             score += 1;
                             i += 4;
                         } else {
@@ -434,7 +462,7 @@ class Cribbage {
         //KNOB CHECK
 
         for(var i = 0; i < flushhand.length; i++){
-            if(flushhand[i].getNum() == "11"){
+            if(flushhand[i].getRealNum() == 11){
                 if(flushhand[i].getSuite() == this.turnUp.getSuite()){
                     score += 1;
                 }
@@ -453,7 +481,7 @@ class Player{
         this.hand = hand;
         //console.log(this.hand);
         this.score = 0;
-        this.savedHand = [];
+        this.savedHand = hand.slice();
         this.pID = 0;
         //console.log("hand saved! : "+ this.savedHand);
     }
@@ -470,7 +498,7 @@ class Player{
         //console.log(this.name + "'s SAVED hand right now! : " + this.savedHand);
     }
     getSavedHand(){
-        //console.log("SAVED HAND: " + this.savedHand);
+        console.log("SAVED HAND: " + this.savedHand);
         return this.savedHand;
     }
     removeFromHand(rHandID) {
@@ -595,6 +623,9 @@ class Card {//card name is a string
         }
         return num;
     }
+    getRealNum(){
+        return this.numID;
+    }
     turnOver(){
         if(this.turnOver){
             this.id = this.oid;
@@ -717,88 +748,40 @@ io.sockets.on("connection", function(socket){
         io.sockets.in(rooms[data.room]).emit("gameStateUpdate", { p1Cards: games[data.room].p1.getHand(), p2Cards: games[data.room].p2.getHand(), turnUpCard: games[data.room].turnUp, p1Score: games[data.room].p1.getScore(), p2Score: games[data.room].p2.getScore(), pCards: games[data.room].pCards, dCards: games[data.room].dCards });
         console.log("p1's hand length: " + games[data.room].p1.getHand().length);
         console.log("p2's hand length: " + games[data.room].p2.getHand().length);
-        //callback(games[data.room].playCard(games[data.room].getCardFromPlayer(data.cardIndex, data.pname), data.pname))
-        //on the exception that call go is needed, turn will be incremented anyway and is done automatically
-    });
-    socket.on("addToCrib", function(data, callback){//data is roomname, handIndex of selected card, and playernum
-        //console.log("this works tho: " + data.playerNum);
-
-        if(data.playerNum == "player 1"){
-            //ifaddingtocrib
-            if(games[data.roomNum].crib.length < 4 && games[data.roomNum].crib1 < 2){
-                games[data.roomNum].addToCrib(games[data.roomNum].p1.pPlayCard(data.handIndex), data.playerNum);
-                io.sockets.in(rooms[data.roomNum]).emit("updateCrib",{card: games[data.roomNum].p1.pPlayCard(data.handIndex), whichPlayer: data.playerNum});
-                games[data.roomNum].p1.removeFromHandIndex(data.handIndex);
-            }else if(games[data.roomNum].boardIsLegal(games[data.roomNum].p1.pPlayCard(data.handIndex))){ //passes card object
-                //console.log("OKOKOKOKOKOKOKOKOKOKOKOK");
-                //check for go here instead, faggot.
-                if(games[data.roomNum].boardPlayCard(games[data.roomNum].p1.pPlayCard(data.handIndex),games[data.roomNum].p1.getName())){
-                    games[data.roomNum].p1.removeFromHandIndex(data.handIndex);
-                    callback(true);
-                }else{
-                    callback(false);
-                }
-                //console.log("PCARDS UPDATE: " + games[data.roomNum].pCards);
-            }
-            //if statement of legal play here, have function return if legal else, don't.
-        } else if (data.playerNum == "player 2"){
-            if(games[data.roomNum].crib.length < 4 && games[data.roomNum].crib2 < 2){
-                games[data.roomNum].addToCrib(games[data.roomNum].p2.pPlayCard(data.handIndex), data.playerNum);
-                io.sockets.in(rooms[data.roomNum]).emit("updateCrib",{card: games[data.roomNum].p2.pPlayCard(data.handIndex), whichPlayer: data.playerNum});
-                games[data.roomNum].p2.removeFromHandIndex(data.handIndex);
-            }else if(games[data.roomNum].boardIsLegal(games[data.roomNum].p2.pPlayCard(data.handIndex))){ //passes card object
-                //console.log("OKOKOKOKOKOKOKOKOKOKOKOK");
-                if(games[data.roomNum].boardPlayCard(games[data.roomNum].p2.pPlayCard(data.handIndex),games[data.roomNum].p2.getName())){
-                    games[data.roomNum].p2.removeFromHandIndex(data.handIndex);
-                    callback(true);
-                }else{
-                    callback(false);
-                }
-            }
-        }
-        io.sockets.in(rooms[data.roomNum]).emit("updateScore",{p1Score: games[data.roomNum].p1.getScore(),p2Score: games[data.roomNum].p2.getScore()});
-        io.sockets.in(rooms[data.roomNum]).emit("updatePlay",{pCards: games[data.roomNum].boardGetpCards(),dCards: games[data.roomNum].boardGetdCards()});
-        io.sockets.in(rooms[data.roomNum]).emit("fillHands",{p1Cards:games[data.roomNum].p1.getHand(),p2Cards:games[data.roomNum].p2.getHand()});
-
-        if(games[data.roomNum].boardCheckPCards()){
+        if(games[data.room].boardCheckPCards()){
+            console.log("MATCH IS OVERRRR!!!");
             //fix this wtf
             //console.log("GAME FULL p1 saved hand: " + games[data.roomNum].p1.getSavedHand());
             //console.log("GAME FULL p2 saved hand: " + games[data.roomNum].p1.getSavedHand());
-            games[data.roomNum].p1.score += games[data.roomNum].scoreHand(games[data.roomNum].p1.getSavedHand());
-            games[data.roomNum].p2.score += games[data.roomNum].scoreHand(games[data.roomNum].p2.getSavedHand());
+            games[data.room].p1.score += games[data.room].scoreHand(games[data.room].p1.getSavedHand());
+            games[data.room].p2.score += games[data.room].scoreHand(games[data.room].p2.getSavedHand());
+            //games[data.room].newRound();
             //console.log("board is full!!!!");
-            newRound(data.roomNum);
+            newRound(data.room);
         }
+        //callback(games[data.room].playCard(games[data.room].getCardFromPlayer(data.cardIndex, data.pname), data.pname))
+        //on the exception that call go is needed, turn will be incremented anyway and is done automatically
     });
     function newRound(roomNum){
-        //console.log("new round starting...");
-        //console.log("Generating new deck...");
-        var dDeck = new Deck();;
+        console.log("NEW ROUND BEGINNING!...");
+        console.log("Generating new deck...");
+        var dDeck = new Deck();
         //console.log("Refreshing Players...");
-        games[roomNum].p1.setHand(dDeck.getRandomCard(6));
-        games[roomNum].p2.setHand(dDeck.getRandomCard(6));
-        var newCrib = games[roomNum].isCrib
         //console.log("Players deck refereshed!!");
         //console.log("player 1: "+p1.getName()+ " player 2: "+p2.getName());
         //console.log("Generating Game...");
+        games[roomNum].p1.setHand(dDeck.getRandomCard(6));
+        games[roomNum].p2.setHand(dDeck.getRandomCard(6));
+        //console.log(games[roomNum].p1.name + " hand is: " + gamesp);
         var crib = new Cribbage(games[roomNum].p1, games[roomNum].p2, dDeck);
         crib.generateFirstTurn(games[roomNum].isCrib);
         games[roomNum] = crib;
         //console.log("Game Generated!");
-        io.sockets.in(rooms[roomNum]).emit("newRoundRoom",{player1: games[roomNum].p1.getName(), player2: games[roomNum].p2.getName(), roomCount: roomNum, isCrib: games[roomNum].isCrib});
+        //io.sockets.in(rooms[roomNum]).emit("newRoundRoom",{player1: games[roomNum].p1.getName(), player2: games[roomNum].p2.getName(), roomCount: roomNum, isCrib: games[roomNum].isCrib});
         //io.sockets.rooms[roomcount].counter = 0;
         //console.log("NEW ROUND IN ROOM:" + rooms[roomNum]);
-        io.sockets.in(rooms[roomcount]).emit("gameStateUpdate", { p1Cards: games[roomNum].p1.getHand(), p2Cards: games[roomNum].p2.getHand(), turnUpCard: crib.turnUp, p1Score: games[roomNum].p1.getScore(), p2Score: games[roomNum].p2.getScore(), pCards: crib.pCards, dCards: crib.dCards});
-        //io.sockets.in(rooms[roomNum]).emit("setTurnUp",{tu: games[roomNum].turnUp});
-        //io.sockets.in(rooms[roomNum]).emit("fillHands",{p1Cards:games[roomNum].p1.getHand(),p2Cards:games[roomNum].p2.getHand()});
-        //console.log("hands filled!");
-        //io.sockets.in(rooms[roomNum]).emit("updateScore",{p1Score: games[roomNum].p1.getScore(),p2Score: games[roomNum].p2.getScore()});
-        //io.sockets.in(rooms[roomNum]).emit("updatePlay",{pCards: games[data.roomNum].boardGetpCards(),dCards: games[data.roomNum].boardGetdCards()});
-        //io.sockets.in(rooms[roomNum]).emit("fillHands",{p1Cards:games[roomNum].p1.getHand(),p2Cards:games[roomNum].p2.getHand()});
-        //console.log("hands filled!");
-        //io.sockets.in(rooms[roomNum]).emit("fillHands",{p1Cards:games[data.roomNum].p1.getHand(),p2Cards:games[data.roomNum].p2.getHand()});
-        //console.log("new game starring: player 1 as "+p1.getName()+"with player 2 as "+p2.getName());
-        //console.log(roomNum);
+        io.sockets.in(rooms[roomNum]).emit("welcomeToRoom", { player1: games[roomNum].p1.getName(), player2: games[roomNum].p2.getName(), roomCount: roomNum, isCrib: crib.isCrib });
+        io.sockets.in(rooms[roomNum]).emit("gameStateUpdate", { p1Cards: games[roomNum].p1.getHand(), p2Cards: games[roomNum].p2.getHand(), turnUpCard: crib.turnUp, p1Score: games[roomNum].p1.getScore(), p2Score: games[roomNum].p2.getScore(), pCards: crib.pCards, dCards: crib.dCards});
     }
     socket.on("accept",function(data){
         console.log("accepted request FROM: "+data+" TO: " + socket.nickname);
