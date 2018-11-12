@@ -336,15 +336,18 @@ class Cribbage {
         return false;
     }
     scoreHand(hand, isCrib) {
+        try {
+            
         //isCrib, 1  : crib check
         //isCrib, 0  : hand check
 
         //RUN CHECK
 
         //FIFTEEN CHECK
-        var handSorted = hand.push(this.turnUp);
-
-        score += this.scoreRun(handSorted);
+        var handSorted = [];
+        handSorted = hand.slice();
+        handSorted.push(this.turnUp);
+        console.log(handSorted);
         //score += this.scoreRun(handSorted);
         var result = []; //full list of bitstrings
         var score = 0;
@@ -364,7 +367,7 @@ class Cribbage {
         }
         //console.log("RESULT LENGTH!! : "+ result.length);
         for (var r = 0; r < result.length; r++) {
-            console.log("tofif reset");
+            //console.log("tofif reset");
             var tofif = 0;
             var addtofif = 0;
             for (var v = 0; v < result[r].length; v++) {
@@ -374,7 +377,7 @@ class Cribbage {
                     } else {
                         addtofif = parseInt(handSorted[v].getNum());
                     }
-                    console.log("adding " + tofif + " with " + addtofif);
+                    //console.log("adding " + tofif + " with " + addtofif);
                     tofif += addtofif;
                     //console.log("result r: " + result[r] + " slot v:" +  handforscore[v].getNum());
                 }
@@ -386,15 +389,17 @@ class Cribbage {
                 score += 2;
             }
         }
+        console.log("score is: " + score);
         
         //PAIRS, TRIPLES AND QUADRUPLES CHECK
-        var score = 0;
-        for(var i = 0; i < handSorted.length; i++){
-            if(handSorted[i]  == handSorted[i + 1].getRealNum()  && handSorted[i + 1].getRealNum()  != null){
+        //Tvar score = 0;
+        for(var i = 0; i < handSorted.length - 1; i++){
+            console.log("i Value : " + i);
+            if(handSorted[i]  == handSorted[i + 1].getRealNum()  && handSorted[i + 1].getRealNum()  != null&& handSorted[i]  != null){
                 score += 2;
-                if(handSorted[i]  == handSorted[i + 2].getRealNum() && handSorted[i + 2].getRealNum()  != null){
+                if(handSorted[i]  == handSorted[i + 2].getRealNum() && handSorted[i + 2].getRealNum()  != null&& handSorted[i]  != null){
                     score += 4;
-                    if(handSorted[i]  == handSorted[i + 3].getRealNum() && handSorted[i + 3].getRealNum()  != null){
+                    if(handSorted[i]  == handSorted[i + 3].getRealNum() && handSorted[i + 3].getRealNum()  != null&& handSorted[i]  != null){
                         score += 6;
                         i += 3;
                     } else {
@@ -409,14 +414,14 @@ class Cribbage {
         
         //UNIQUE RUNS CHECK
 
-        for(var i = 0; i < handSorted.length; i++){
-            if(handSorted[i].getRealNum() + 1 == handSorted[i + 1].getRealNum()  && handSorted[i + 1]  != null){
+        for(var i = 0; i < handSorted.length - 1; i++){
+            if(handSorted[i].getRealNum() + 1 == handSorted[i + 1].getRealNum()  && handSorted[i + 1]  != null && handSorted[i]  != null){
                 //score += 1;
-                if(handSorted[i].getRealNum() + 2  == handSorted[i + 2].getRealNum() && handSorted[i + 2]  != null){
+                if(handSorted[i].getRealNum() + 2  == handSorted[i + 2].getRealNum() && handSorted[i + 2]  != null && handSorted[i]  != null){
                     score += 3;
-                    if(handSorted[i].getRealNum() + 3 == handSorted[i + 3].getRealNum() && handSorted[i + 3]  != null){
+                    if(handSorted[i].getRealNum() + 3 == handSorted[i + 3].getRealNum() && handSorted[i + 3]  != null && handSorted[i]  != null){
                         score += 1;
-                        if(handSorted[i].getRealNum() + 4 == handSorted[i + 4].getRealNum() && handSorted[i + 4]  != null){
+                        if(handSorted[i].getRealNum() + 4 == handSorted[i + 4].getRealNum() && handSorted[i + 4]  != null&& handSorted[i]  != null){
                             score += 1;
                             i += 4;
                         } else {
@@ -472,6 +477,9 @@ class Cribbage {
         //RETURN SCORE
         console.log("SCORE IS: " + score);
         return score;
+        } catch (error) {
+            console.log(error);
+        }
     }   
 }
 class Player{
@@ -492,7 +500,6 @@ class Player{
         return this.chosen;
     }
     removeFromHandIndex(handIndex){
-        this.savedHand.push(this.hand[handIndex]);
         this.hand.splice(handIndex,1);
         //console.log(this.name + "'s hand right now! : " + this.hand);
         //console.log(this.name + "'s SAVED hand right now! : " + this.savedHand);
@@ -505,7 +512,7 @@ class Player{
         console.log("will attempt to remove card: + " + rHandID);
         for(var i = 0; i < this.hand.length;i++){ //search hand for card ID
             if(this.hand[i].oid == rHandID){
-                this.savedHand.push(this.hand[i]);
+                //this.savedHand.push(this.hand[i]);
                 this.hand.splice(i,1);
             }
         }
@@ -748,13 +755,17 @@ io.sockets.on("connection", function(socket){
         io.sockets.in(rooms[data.room]).emit("gameStateUpdate", { p1Cards: games[data.room].p1.getHand(), p2Cards: games[data.room].p2.getHand(), turnUpCard: games[data.room].turnUp, p1Score: games[data.room].p1.getScore(), p2Score: games[data.room].p2.getScore(), pCards: games[data.room].pCards, dCards: games[data.room].dCards });
         console.log("p1's hand length: " + games[data.room].p1.getHand().length);
         console.log("p2's hand length: " + games[data.room].p2.getHand().length);
+        games[data.room].p1.score += games[data.room].scoreHand(games[data.room].p1.getSavedHand(),0);
+        games[data.room].p2.score += games[data.room].scoreHand(games[data.room].p2.getSavedHand(),0);
         if(games[data.room].boardCheckPCards()){
             console.log("MATCH IS OVERRRR!!!");
             //fix this wtf
             //console.log("GAME FULL p1 saved hand: " + games[data.roomNum].p1.getSavedHand());
             //console.log("GAME FULL p2 saved hand: " + games[data.roomNum].p1.getSavedHand());
-            games[data.room].p1.score += games[data.room].scoreHand(games[data.room].p1.getSavedHand());
-            games[data.room].p2.score += games[data.room].scoreHand(games[data.room].p2.getSavedHand());
+            console.log("p1's saved hand:" + games[data.room].p1.getSavedHand());
+            console.log("also p1's saved hand:" + games[data.room].p1.savedHand);
+            games[data.room].p1.score += games[data.room].scoreHand(games[data.room].p1.getSavedHand(),0);
+            games[data.room].p2.score += games[data.room].scoreHand(games[data.room].p2.getSavedHand(),0);
             //games[data.room].newRound();
             //console.log("board is full!!!!");
             newRound(data.room);
