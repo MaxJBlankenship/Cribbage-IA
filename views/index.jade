@@ -5,6 +5,7 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
         #login
+
             style ::placeholder{color:white;opacity:0.5;}
             img(class = "clogo" src="images/cribbage.png")
             br
@@ -48,7 +49,9 @@ html
             br
             br
             br
-            img(class = "cribBoard" src="images/cribboardnew.png")
+            //here is the digital crib loading bar!!
+            //img(class = "cribBoard" src="images/cribboardnew.png")
+            .ldBar(data-value='50')
             #score.scorebox
                 #p1scorebox.scoreplace
                     h4(id = "p1Score") 0
@@ -68,8 +71,6 @@ html
             //
             //button.dcard DRAW CARD
             //#cribArea.cribItself
-            #turnUp.tu
-                img(id = "turnUpCard") 
                 
         br
         br
@@ -90,8 +91,8 @@ html
 
 script(src="/socket.io/socket.io.js")
 script(src="https://code.jquery.com/jquery-1.11.1.js")
-link(rel='stylesheet', type='text/css', href='loading-bar.css')
-script(type='text/javascript', src='loading-bar.js')
+link(rel='stylesheet', type='text/css', href='/stylesheets/loading-bar.css')
+script(type='text/javascript', src='/javascripts/loading-bar.js')
 script.
     function hide(){
         document.getElementById("login").style.display = "none";
@@ -352,11 +353,19 @@ script.
 
             console.log("UPDATING SCORE!!!");
             if(whichPlayer == "player 1"){
-                $p2Score.html("<h4>"+data.p2Score+"</h4>");
+                //$p2ScoreBar.html(.ldBar(data-value="data.p2Score"));
+                //$p1ScoreBar.html(.ldBar(data-value="data.p1Score"));
+                //set image fill to the gold one ^^
+                $p2Score.html("<h4 style = 'color: #ECE4D3'>"+data.p2Score+"</h4>");
                 $p1Score.html("<h4 style = 'color: gold'>"+data.p1Score+"</h4>");
             }else{
-                $p1Score.html("<h4>"+data.p1Score+"</h4>");
+                //$p2ScoreBar.html(.ldBar(data-value="data.p2Score"));
+                //set image fill to the gold one ^^
+                //$p1ScoreBar.html(.ldBar(data-value="data.p1Score")); 
+                .ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/pbar.png",data-fill-background="#292F40")
+                .ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/opbar.png",data-fill-background="#292F40")
                 $p2Score.html("<h4 style = 'color: gold'>"+data.p2Score+"</h4>");
+                $p1Score.html("<h4 style = 'color: #ECE4D3'>"+data.p1Score+"</h4>");
             }
 
 
@@ -390,9 +399,9 @@ script.
             hand = [];
             if(whichPlayer == "player 1"){
                 $p1Hand.html("<div class='pName' id='p1Name' style = 'color: gold'>"+$p1name+"</div><br>");
-                $p2Hand.html("<div class='pName' id='p2Name'>"+$p2name+"</div><br>");
+                $p2Hand.html("<div class='pName' id='p2Name' style = 'color: #ECE4D3'>"+$p2name+"</div><br>");
             }else{
-                $p1Hand.html("<div class='pName' id='p1Name'>"+$p1name+"</div><br>");
+                $p1Hand.html("<div class='pName' id='p1Name' style = 'color: #ECE4D3'>"+$p1name+"</div><br>");
                 $p2Hand.html("<div class='pName' id='p2Name' style = 'color: gold'>"+$p2name+"</div><br>");
             }
             console.log("HAND CLEARED!");
