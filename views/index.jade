@@ -7,6 +7,8 @@ html
         #login
 
             style ::placeholder{color:white;opacity:0.5;}
+            
+            //.ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/pbar.png",data-fill-background="#292F40")
             img(class = "clogo" src="images/cribbage.png")
             br
             br
@@ -24,6 +26,12 @@ html
                 input(class = "how", type='submit', value='What The Heck is Cribbage?')
 
         #lobby.lob
+        
+            //style ::placeholder{color:white;opacity:0.5;}
+            //.ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/opbar.png",data-fill-background="#292F40")
+            img(class = "clogo" src="images/cribbage.png")
+            //#testdiv.ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/pbar.png",data-fill-background="#292F40")
+
             #userbox.userbox
                 h3 Users Online
                 hr
@@ -49,9 +57,14 @@ html
             br
             br
             br
+            //.ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/pbar.png",data-fill-background="#292F40")
+            //.ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/opbar.png",data-fill-background="#292F40")
+            
             //here is the digital crib loading bar!!
             //img(class = "cribBoard" src="images/cribboardnew.png")
-            .ldBar(data-value='50')
+            #scorebars.scorebarbox
+                //.ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/pbar.png",data-fill-background="#292F40")
+                //.ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/opbar.png",data-fill-background="#292F40")
             #score.scorebox
                 #p1scorebox.scoreplace
                     h4(id = "p1Score") 0
@@ -189,7 +202,8 @@ script.
                 if(data){
                     $('#login').hide();
                     $('#crib').hide();
-                    $('#lobby').show();
+                    $('#lobby').show(250,"swing");
+                    //$('#lobby').append('<div id="yarr" class="ldBar" data-fill-background-extrude="-1" data-type="fill" data-min="0" data-max="121" data-value="11" data-fill-dir="ltr" data-img="/images/pbar.png" data-fill-background="#292F40"></div>');
                 }else{
                     //$nickError.html('Invalid username!');
                     $nickBox.val('Invalid Username!');
@@ -256,8 +270,9 @@ script.
             scrollDown();
         });
         socket.on("newRoundRoom", function(data){
+            //THIS IS OUTDATED!!
             $('#lobby').hide();
-            $('#crib').show();
+            $('#crib').show(250,"swing");
             //$hwel.append("<p>WELCOME, " + data.player1 + " AND " + data.player2 + " IN ROOM: "+ data.roomCount+"</p>");
             roomName = data.roomCount;
             $playHands.html("");            
@@ -296,7 +311,7 @@ script.
         });
         socket.on("welcomeToRoom", function(data){
             $('#lobby').hide();
-            $('#crib').show();
+            $('#crib').show(250,"swing");
             //$hwel.append("<p>WELCOME, " + data.player1 + " AND " + data.player2 + " IN ROOM: "+ data.roomCount+"</p>");
             roomName = data.roomCount;  
             $playHands.html("");          
@@ -356,14 +371,14 @@ script.
                 //$p2ScoreBar.html(.ldBar(data-value="data.p2Score"));
                 //$p1ScoreBar.html(.ldBar(data-value="data.p1Score"));
                 //set image fill to the gold one ^^
+                
+                //$p2Score.append('<div class="ldBar" data-fill-background-extrude="-1" data-type="fill" data-min="0" data-max="121" data-value="11" data-fill-dir="ltr" data-img="/images/pbar.png" data-fill-background="#292F40"></div>');
                 $p2Score.html("<h4 style = 'color: #ECE4D3'>"+data.p2Score+"</h4>");
                 $p1Score.html("<h4 style = 'color: gold'>"+data.p1Score+"</h4>");
             }else{
                 //$p2ScoreBar.html(.ldBar(data-value="data.p2Score"));
                 //set image fill to the gold one ^^
                 //$p1ScoreBar.html(.ldBar(data-value="data.p1Score")); 
-                .ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/pbar.png",data-fill-background="#292F40")
-                .ldBar(data-fill-background-extrude = "-1",data-type='fill',data-min = "0", data-max="121",data-value=(10+1),data-fill-dir="ltr",data-img="/images/opbar.png",data-fill-background="#292F40")
                 $p2Score.html("<h4 style = 'color: gold'>"+data.p2Score+"</h4>");
                 $p1Score.html("<h4 style = 'color: #ECE4D3'>"+data.p1Score+"</h4>");
             }

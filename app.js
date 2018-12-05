@@ -43,7 +43,6 @@ class Cribbage {
     //6s 6d 7s 8s | 3s
     //scores 15
     handSort(arr) {
-        //this is literally jsut bubblesort lol
         for (var i = arr.length - 1; i >= 0; i--) {
             for (var j = 1; j <= i; j++) {
                 if (arr[j - 1] > arr[j]) {
@@ -101,7 +100,7 @@ class Cribbage {
     getDeadCards() {
         return this.dCards;
     }
-    checkCardGo(card, pName) {
+    checkCardGo(card) {
         console.log("checking for go initiated, checking: " + card.getNum() + " + " + this.getBoardSum());
         if (card.getNum() + this.getBoardSum() <= 31) {
             console.log("LESS THAN 31 DETECTED! its FINE!");
@@ -110,7 +109,7 @@ class Cribbage {
         console.log("MORE THAN 31 DETECTED! BAD BAD BAD!");
         return false;
     }
-    checkHand(pName) { //USE THIS SHIT INSTEAD
+    checkHand(pName) { //USE THIS INSTEAD
         console.log("checkhand Called!!!!");
         if (pName == this.p1.getName()) {
             var hand = this.p2.getHand();
@@ -684,7 +683,6 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-console.log("Loading. . . \n");
 console.log("CRIBBAGE LOADED! \n");
 console.log(" ███▄ ▄███▓ ▄▄▄      ▒██   ██▒       ▄▄▄▄   \n▓██▒▀█▀ ██▒▒████▄    ▒▒ █ █ ▒░      ▓█████▄ \n▓██    ▓██░▒██  ▀█▄  ░░  █   ░      ▒██▒ ▄██\n▒██    ▒██ ░██▄▄▄▄██  ░ █ █ ▒       ▒██░█▀  \n▒██▒   ░██▒ ▓█   ▓██▒▒██▒ ▒██▒      ░▓█  ▀█▓\n░ ▒░   ░  ░ ▒▒   ▓▒█░▒▒ ░ ░▓ ░      ░▒▓███▀▒\n░  ░      ░  ▒   ▒▒ ░░░   ░▒ ░      ▒░▒   ░ \n░      ░     ░   ▒    ░    ░         ░    ░ \n       ░         ░  ░ ░    ░         ░      \n                                          ░ \n");
 
@@ -755,8 +753,8 @@ io.sockets.on("connection", function(socket){
         io.sockets.in(rooms[data.room]).emit("gameStateUpdate", { p1Cards: games[data.room].p1.getHand(), p2Cards: games[data.room].p2.getHand(), turnUpCard: games[data.room].turnUp, p1Score: games[data.room].p1.getScore(), p2Score: games[data.room].p2.getScore(), pCards: games[data.room].pCards, dCards: games[data.room].dCards });
         console.log("p1's hand length: " + games[data.room].p1.getHand().length);
         console.log("p2's hand length: " + games[data.room].p2.getHand().length);
-        games[data.room].p1.score += games[data.room].scoreHand(games[data.room].p1.getSavedHand(),0);
-        games[data.room].p2.score += games[data.room].scoreHand(games[data.room].p2.getSavedHand(),0);
+        //games[data.room].p1.score += games[data.room].scoreHand(games[data.room].p1.getSavedHand(),0);
+        //games[data.room].p2.score += games[data.room].scoreHand(games[data.room].p2.getSavedHand(),0);
         if(games[data.room].boardCheckPCards()){
             console.log("MATCH IS OVERRRR!!!");
             //fix this wtf
