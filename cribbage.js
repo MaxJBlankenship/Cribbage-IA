@@ -104,10 +104,8 @@ class Cribbage{
                         this.addtofif = parseInt(handforscore[v].getNum());
                     }
                     this.tofif += this.addtofif;
-                    //console.log("result r: " + result[r] + " slot v:" +  handforscore[v].getNum());
                 }
             }
-            //console.log("fift check is " + this.tofif);
             if(this.tofif == 15){
                 this.tofif = 0;
                 //console.log("fifteen sum found!");
